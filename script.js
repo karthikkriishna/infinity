@@ -1,12 +1,13 @@
 // UTILITIES
 const random = (min, max) => Math.random() * (max - min) + min;
 const mapRange = (value, low1, high1, low2, high2) => low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+const lerp = (a, b, n) => (1 - n) * a + n * b;
 
-// 1. LORENZ ATTRACTOR (CHAOS THEORY) HERO BACKGROUND
+// 1. LORENZ ATTRACTOR (CHAOS THEORY) HERO BACKGROUND - OPTIMIZED
 class LorenzAttractor {
     constructor(canvas) {
         this.canvas = canvas;
-        this.ctx = canvas.getContext('2d');
+        this.ctx = canvas.getContext('2d', { alpha: false }); // Optimization: Disable alpha channel
         this.width = window.innerWidth;
         this.height = window.innerHeight;
         this.canvas.width = this.width;
@@ -19,7 +20,8 @@ class LorenzAttractor {
         
         // Simulation State
         this.points = [];
-        this.numTrails = 150;
+        this.numTrails = 60; // REDUCED from 150 for performance
+        this.trailLength = 20; // REDUCED from 40 for performance
         this.dt = 0.008;
         
         // Interaction
@@ -30,8 +32,18 @@ class LorenzAttractor {
         
         this.init();
         
-        window.addEventListener('resize', () => this.resize());
-        window.addEventListener('mousemove', (e) => this.onMouseMove(e));
+        // Throttled Resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => this.resize(), 100);
+        });
+
+        // Mouse Move (Lightweight)
+        window.addEventListener('mousemove', (e) => {
+            this.targetRotationY = (e.clientX - this.width/2) * 0.0005;
+            this.targetRotationX = (e.clientY - this.height/2) * 0.0005;
+        });
     }
     
     init() {
@@ -54,21 +66,23 @@ class LorenzAttractor {
         this.canvas.height = this.height;
     }
     
-    onMouseMove(e) {
-        // Map mouse X to rotation Y (yaw), Y to rotation X (pitch)
-        this.targetRotationY = (e.clientX - this.width/2) * 0.0005;
-        this.targetRotationX = (e.clientY - this.height/2) * 0.0005;
-    }
-    
     update() {
         // Smooth rotation
-        this.rotationY += (this.targetRotationY - this.rotationY) * 0.05;
-        this.rotationX += (this.targetRotationX - this.rotationX) * 0.05;
+        this.rotationY = lerp(this.rotationY, this.targetRotationY, 0.05);
+        this.rotationX = lerp(this.rotationX, this.targetRotationX, 0.05);
         
         // Auto rotate slowly
         this.rotationY += 0.002;
 
-        this.points.forEach(p => {
+        // Pre-calculate rotation constants to save trig calls
+        const cosY = Math.cos(this.rotationY);
+        const sinY = Math.sin(this.rotationY);
+        const cosX = Math.cos(this.rotationX);
+        const sinX = Math.sin(this.rotationX);
+
+        for(let i = 0; i < this.points.length; i++) {
+            let p = this.points[i];
+            
             // Lorenz Equations
             let dx = (this.sigma * (p.y - p.x)) * this.dt;
             let dy = (p.x * (this.rho - p.z) - p.y) * this.dt;
@@ -80,78 +94,77 @@ class LorenzAttractor {
             
             // Store trail
             p.trail.push({x: p.x, y: p.y, z: p.z});
-            if(p.trail.length > 40) p.trail.shift();
-        });
+            if(p.trail.length > this.trailLength) p.trail.shift();
+        }
+
+        return { cosY, sinY, cosX, sinX };
     }
     
-    draw() {
-        this.ctx.fillStyle = '#020c1b'; // Clear with background color (no transparency for clearer trails)
+    draw(trig) {
+        // Clear with opacity hack for trail effect? No, we manage trails manually.
+        this.ctx.fillStyle = '#020c1b'; 
         this.ctx.fillRect(0, 0, this.width, this.height);
         
-        // Center the attractor
-        this.ctx.save();
-        this.ctx.translate(this.width/2, this.height/2);
-        this.ctx.scale(15, 15); // Scale up
-        
-        this.points.forEach(p => {
+        const cx = this.width/2;
+        const cy = this.height/2;
+
+        this.ctx.lineWidth = 0.5; // Thinner lines for crisp look
+
+        for(let i = 0; i < this.points.length; i++) {
+            let p = this.points[i];
+            if(p.trail.length < 2) continue;
+
             this.ctx.beginPath();
             this.ctx.strokeStyle = p.color;
-            this.ctx.lineWidth = 0.15;
             
-            for(let i=0; i<p.trail.length - 1; i++) {
-                let p1 = p.trail[i];
-                let p2 = p.trail[i+1];
-                
+            // Optimization: Move moveTo outside loop
+            // Project first point
+            let p0 = p.trail[0];
+            let r0 = this.rotateFast(p0.x, p0.y, p0.z - 25, trig);
+            this.ctx.moveTo(cx + r0.x * 15, cy + r0.y * 15);
+
+            for(let j=1; j<p.trail.length; j++) {
+                let pt = p.trail[j];
                 // 3D Rotation Projection
-                let r1 = this.rotate(p1.x, p1.y, p1.z - 25); // Shift Z to center vertically
-                let r2 = this.rotate(p2.x, p2.y, p2.z - 25);
-                
-                // Simple perspective
-                let scale1 = 400 / (400 - r1.z);
-                let scale2 = 400 / (400 - r2.z);
-                
-                this.ctx.moveTo(r1.x, r1.y);
-                this.ctx.lineTo(r2.x, r2.y);
+                let r = this.rotateFast(pt.x, pt.y, pt.z - 25, trig);
+                this.ctx.lineTo(cx + r.x * 15, cy + r.y * 15);
             }
             this.ctx.stroke();
             
             // Draw head
             let head = p.trail[p.trail.length-1];
-            if(head) {
-                 let rHead = this.rotate(head.x, head.y, head.z - 25);
-                 this.ctx.fillStyle = '#fff';
-                 this.ctx.fillRect(rHead.x, rHead.y, 0.3, 0.3);
-            }
-        });
-        
-        this.ctx.restore();
+            let rHead = this.rotateFast(head.x, head.y, head.z - 25, trig);
+            this.ctx.fillStyle = '#fff';
+            this.ctx.fillRect(cx + rHead.x * 15, cy + rHead.y * 15, 1, 1);
+        }
     }
     
-    rotate(x, y, z) {
+    // Optimized rotation reusing trig values
+    rotateFast(x, y, z, { cosY, sinY, cosX, sinX }) {
         // Rotate around Y
-        let x1 = x * Math.cos(this.rotationY) - z * Math.sin(this.rotationY);
-        let z1 = x * Math.sin(this.rotationY) + z * Math.cos(this.rotationY);
+        let x1 = x * cosY - z * sinY;
+        let z1 = x * sinY + z * cosY;
         
         // Rotate around X
-        let y2 = y * Math.cos(this.rotationX) - z1 * Math.sin(this.rotationX);
-        let z2 = y * Math.sin(this.rotationX) + z1 * Math.cos(this.rotationX);
+        let y2 = y * cosX - z1 * sinX;
+        let z2 = y * sinX + z1 * cosX;
         
         return {x: x1, y: y2, z: z2};
     }
     
     animate() {
-        this.update();
-        this.draw();
+        const trig = this.update();
+        this.draw(trig);
         requestAnimationFrame(() => this.animate());
     }
 }
 
 
-// 2. TEXT SCRAMBLE / DECRYPT EFFECT
+// 2. TEXT SCRAMBLE - OPTIMIZED
 class TextScramble {
     constructor(el) {
         this.el = el;
-        this.chars = '!<>-_\\/[]{}—=+*^?#________';
+        this.chars = '!<>-_\/[]{}—=+*^?#________';
         this.update = this.update.bind(this);
     }
     
@@ -164,8 +177,8 @@ class TextScramble {
         for (let i = 0; i < length; i++) {
             const from = oldText[i] || '';
             const to = newText[i] || '';
-            const start = Math.floor(Math.random() * 40);
-            const end = start + Math.floor(Math.random() * 40);
+            const start = Math.floor(Math.random() * 20); // Faster duration
+            const end = start + Math.floor(Math.random() * 20);
             this.queue.push({ from, to, start, end });
         }
         
@@ -211,66 +224,46 @@ class TextScramble {
 }
 
 
-// 3. MAGNETIC BUTTONS & CURSOR
+// 3. OPTIMIZED CURSOR (RAF LOOP)
 function initCursor() {
     const dot = document.querySelector('.cursor-dot');
     const outline = document.querySelector('.cursor-outline');
     
-    // Smooth Follow Logic
+    if(!dot || !outline) return;
+
     let mouseX = 0, mouseY = 0;
+    let dotX = 0, dotY = 0;
     let outlineX = 0, outlineY = 0;
     
     window.addEventListener('mousemove', (e) => {
         mouseX = e.clientX;
         mouseY = e.clientY;
-        
-        // Dot moves instantly
-        dot.style.left = `${mouseX}px`;
-        dot.style.top = `${mouseY}px`;
     });
     
-    function animateCursor() {
-        // Outline follows smoothly
-        outlineX += (mouseX - outlineX) * 0.15;
-        outlineY += (mouseY - outlineY) * 0.15;
+    function animate() {
+        // Lerp for smooth movement
+        dotX = lerp(dotX, mouseX, 1); // Instant
+        dotY = lerp(dotY, mouseY, 1);
         
-        outline.style.left = `${outlineX}px`;
-        outline.style.top = `${outlineY}px`;
+        outlineX = lerp(outlineX, mouseX, 0.15); // Smooth lag
+        outlineY = lerp(outlineY, mouseY, 0.15);
         
-        requestAnimationFrame(animateCursor);
+        dot.style.transform = `translate(${dotX}px, ${dotY}px) translate(-50%, -50%)`;
+        outline.style.transform = `translate(${outlineX}px, ${outlineY}px) translate(-50%, -50%)`;
+        
+        requestAnimationFrame(animate);
     }
-    animateCursor();
+    animate();
     
-    // Magnetic Buttons
-    const buttons = document.querySelectorAll('.cta-button, .magnetic-btn');
-    buttons.forEach(btn => {
-        btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const x = e.clientX - rect.left - rect.width / 2;
-            const y = e.clientY - rect.top - rect.height / 2;
-            
-            // Move button slightly towards cursor
-            btn.style.transform = `translate(${x * 0.2}px, ${y * 0.2}px)`;
-            
-            // Hover state for cursor
-            document.body.classList.add('hovering');
-        });
-        
-        btn.addEventListener('mouseleave', () => {
-            btn.style.transform = 'translate(0, 0)';
-            document.body.classList.remove('hovering');
-        });
-    });
-    
-    // Links hover
-    document.querySelectorAll('a').forEach(a => {
-        a.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
-        a.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
+    // Efficient Hover
+    document.querySelectorAll('a, button, .magnetic-btn').forEach(el => {
+        el.addEventListener('mouseenter', () => document.body.classList.add('hovering'));
+        el.addEventListener('mouseleave', () => document.body.classList.remove('hovering'));
     });
 }
 
 
-// 4. SPIROGRAPH GENERATOR FOR TEAM
+// 4. SPIROGRAPH GENERATOR
 function drawSpirograph(canvas) {
     const ctx = canvas.getContext('2d');
     const w = canvas.width = 150;
@@ -304,7 +297,7 @@ document.addEventListener('DOMContentLoaded', () => {
             preloader.style.opacity = '0';
             setTimeout(() => preloader.style.display = 'none', 600);
         }
-    }, 1500);
+    }, 1000);
     
     // 2. Init Lorenz Attractor
     const heroCanvas = document.getElementById('hero-canvas');
@@ -313,36 +306,46 @@ document.addEventListener('DOMContentLoaded', () => {
         attractor.animate();
     }
     
-    // 3. Init Cursor
+    // 3. Init Cursor (Desktop only for performance)
     if (window.matchMedia("(pointer: fine)").matches) {
         initCursor();
     }
     
-    // 4. Init Math Background
+    // 4. Init Math Background (Optimized)
     const bg = document.createElement('div');
     bg.className = 'math-bg';
     document.body.appendChild(bg);
     const symbols = ['∫', '∑', '∞', 'π', '∆', '∇', '∂', '∅', '≈', '≠'];
-    for(let i=0; i<40; i++) {
+    const symbolEls = [];
+    
+    // Reduced count for performance
+    for(let i=0; i<20; i++) {
         const s = document.createElement('span');
         s.className = 'math-symbol';
         s.innerText = symbols[Math.floor(Math.random() * symbols.length)];
         s.style.left = random(0, 100) + 'vw';
         s.style.top = random(0, 100) + 'vh';
         s.style.fontSize = random(1, 3) + 'rem';
-        s.style.opacity = random(0.02, 0.1);
+        s.style.opacity = random(0.02, 0.08);
         bg.appendChild(s);
+        symbolEls.push({ el: s, speed: (i % 3 + 1) * 0.05 });
     }
-    // Parallax
-    window.addEventListener('scroll', () => {
-        const y = window.scrollY;
-        document.querySelectorAll('.math-symbol').forEach((el, i) => {
-            const speed = (i % 5 + 1) * 0.1;
-            el.style.transform = `translateY(${y * speed}px) rotate(${y * 0.05}deg)`;
-        });
-    });
 
-    // 5. Decrypt Headers on Scroll
+    // Optimized Parallax using RAF
+    let scrollY = 0;
+    window.addEventListener('scroll', () => {
+        scrollY = window.scrollY;
+    }, { passive: true }); // Passive listener
+
+    function animateParallax() {
+        symbolEls.forEach(({ el, speed }) => {
+            el.style.transform = `translateY(${scrollY * speed}px) rotate(${scrollY * 0.02}deg)`;
+        });
+        requestAnimationFrame(animateParallax);
+    }
+    animateParallax();
+
+    // 5. Decrypt Headers on Scroll (Intersection Observer)
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -356,7 +359,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-    }, { threshold: 0.2 });
+    }, { threshold: 0.1 }); // Lower threshold
     
     document.querySelectorAll('.section-title').forEach(el => observer.observe(el));
     document.querySelectorAll('.timeline-item').forEach(el => observer.observe(el));
@@ -369,13 +372,7 @@ document.addEventListener('DOMContentLoaded', () => {
         drawSpirograph(canvas);
     });
 
-    // 7. Timeline Drawing Animation (Simulated)
-    const timelineItems = document.querySelectorAll('.timeline-item');
-    timelineItems.forEach((item, index) => {
-        item.style.transitionDelay = `${index * 0.1}s`;
-    });
-    
-    // Mobile Nav
+    // 7. Mobile Nav
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
     if(hamburger) {
@@ -398,7 +395,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const auth = document.getElementById('quote-author');
             const q = quotes[Math.floor(Math.random()*quotes.length)];
             
-            // Simple fade switch
             el.style.opacity = 0; auth.style.opacity = 0;
             setTimeout(() => {
                 el.innerText = q.text;

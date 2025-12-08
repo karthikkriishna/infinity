@@ -18,6 +18,7 @@ body {
     background-color: var(--primary);
     color: var(--text-light);
     line-height: 1.6;
+    overflow-x: hidden;
 }
 
 /* Typography */
@@ -69,6 +70,7 @@ nav {
     top: 0;
     z-index: 1000;
     box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
 }
 
 .logo-container {
@@ -100,6 +102,13 @@ nav {
     color: var(--accent);
 }
 
+.hamburger {
+    display: none;
+    font-size: 1.5rem;
+    color: var(--accent);
+    cursor: pointer;
+}
+
 /* Hero Section */
 header {
     height: 100vh;
@@ -109,6 +118,23 @@ header {
     text-align: center;
     background: radial-gradient(circle at center, var(--secondary) 0%, var(--primary) 100%);
     padding-top: 60px; /* Offset for fixed nav */
+    position: relative;
+    overflow: hidden;
+}
+
+#hero-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    opacity: 0.6;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
 }
 
 .hero-content h1 {
@@ -184,6 +210,30 @@ header {
     background-color: var(--secondary);
 }
 
+.event-filters {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    padding: 8px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s;
+}
+
+.filter-btn:hover, .filter-btn.active {
+    background: rgba(100, 255, 218, 0.1);
+    box-shadow: 0 0 10px rgba(100, 255, 218, 0.2);
+}
+
 .timeline {
     position: relative;
     max-width: 800px;
@@ -205,6 +255,14 @@ header {
     position: relative;
     width: 50%;
     box-sizing: border-box;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.6s ease-out;
+}
+
+.timeline-item.active {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .timeline-item:nth-child(odd) {
@@ -270,37 +328,72 @@ header {
     color: var(--accent);
 }
 
-/* Responsive Timeline */
-@media (max-width: 768px) {
-    .timeline::before {
-        left: 20px;
-    }
-    .timeline-item {
-        width: 100%;
-        padding-left: 50px;
-        padding-right: 20px;
-    }
-    .timeline-item:nth-child(odd) {
-        text-align: left;
-    }
-    .timeline-item:nth-child(even) {
-        left: 0;
-    }
-    .timeline-date {
-        position: relative;
-        top: 0;
-        left: 0 !important;
-        right: 0 !important;
-        display: inline-block;
-        margin-bottom: 10px;
-        width: auto;
-    }
+/* Team Section */
+#team {
+    padding: 100px 0;
+    background-color: var(--primary);
 }
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.team-card {
+    background: var(--secondary);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.team-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--accent);
+}
+
+.member-img-placeholder {
+    width: 120px;
+    height: 120px;
+    background: var(--primary);
+    border-radius: 50%;
+    margin: 0 auto 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+    color: var(--text-dim);
+    border: 2px solid var(--accent);
+}
+
+.team-card h3 {
+    margin: 10px 0 5px;
+    color: var(--text-light);
+}
+
+.team-card .role {
+    color: var(--accent);
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+}
+
+.team-card .bio {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    font-style: italic;
+}
+
 
 /* Quote Generator */
 #quotes {
     padding: 100px 0;
-    background-color: var(--primary);
+    background-color: var(--secondary);
     text-align: center;
 }
 
@@ -310,7 +403,7 @@ header {
 }
 
 .quote-box {
-    background: var(--secondary);
+    background: var(--primary);
     padding: 50px;
     border-radius: 10px;
     position: relative;
@@ -320,6 +413,7 @@ header {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .quote-icon {
@@ -334,11 +428,13 @@ header {
     font-size: 1.8rem;
     font-style: italic;
     margin-bottom: 20px;
+    transition: opacity 0.3s ease;
 }
 
 #quote-author {
     color: var(--accent);
     font-weight: 600;
+    transition: opacity 0.3s ease;
 }
 
 #new-quote-btn {
@@ -360,9 +456,10 @@ header {
 
 /* Footer */
 footer {
-    background: var(--secondary);
+    background: var(--primary);
     padding: 50px 0 20px;
     text-align: center;
+    border-top: 1px solid var(--secondary);
 }
 
 .social-links {
@@ -395,4 +492,64 @@ footer {
 
 .copyright i {
     color: #ff6b6b;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+    .nav-links {
+        position: fixed;
+        right: -100%;
+        top: 80px;
+        height: calc(100vh - 80px);
+        background-color: var(--secondary);
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        transition: 0.3s;
+        box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+        padding-top: 40px;
+    }
+
+    .nav-links.active {
+        right: 0;
+    }
+
+    .nav-links a {
+        display: block;
+        margin: 25px 0;
+        font-size: 1.2rem;
+    }
+
+    .hamburger {
+        display: block;
+    }
+
+    .timeline::before {
+        left: 20px;
+    }
+    .timeline-item {
+        width: 100%;
+        padding-left: 50px;
+        padding-right: 20px;
+    }
+    .timeline-item:nth-child(odd) {
+        text-align: left;
+    }
+    .timeline-item:nth-child(even) {
+        left: 0;
+    }
+    .timeline-date {
+        position: relative;
+        top: 0;
+        left: 0 !important;
+        right: 0 !important;
+        display: inline-block;
+        margin-bottom: 10px;
+        width: auto;
+    }
+    
+    .hero-content h1 {
+        font-size: 3rem;
+        letter-spacing: 5px;
+    }
 }

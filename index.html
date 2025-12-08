@@ -19,10 +19,14 @@
             <img src="assets/logo.jpg" alt="Infinity Logo" class="nav-logo">
             <span>INFINITY</span>
         </div>
+        <div class="hamburger">
+            <i class="fas fa-bars"></i>
+        </div>
         <div class="nav-links">
             <a href="#home">Home</a>
             <a href="#about">About</a>
             <a href="#events">Events</a>
+            <a href="#team">Team</a>
             <a href="#quotes">Wisdom</a>
             <a href="#contact">Contact</a>
         </div>
@@ -30,6 +34,7 @@
 
     <!-- Hero Section -->
     <header id="home">
+        <canvas id="hero-canvas"></canvas>
         <div class="hero-content">
             <div class="logo-wrapper">
                 <img src="assets/logo.jpg" alt="Infinity Club Logo">
@@ -63,10 +68,18 @@
     <section id="events">
         <div class="container">
             <h2 class="section-title">Our Timeline</h2>
+            
+            <div class="event-filters">
+                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="talk">Talks</button>
+                <button class="filter-btn" data-filter="contest">Contests</button>
+                <button class="filter-btn" data-filter="social">Socials</button>
+            </div>
+
             <div class="timeline">
                 
                 <!-- Event Item -->
-                <div class="timeline-item">
+                <div class="timeline-item" data-category="talk">
                     <div class="timeline-date">July 2, 2023</div>
                     <div class="timeline-content">
                         <h3>Math Circle: Planarity of Graphs</h3>
@@ -76,7 +89,7 @@
                 </div>
 
                 <!-- Event Item -->
-                <div class="timeline-item">
+                <div class="timeline-item" data-category="contest">
                     <div class="timeline-date">March 25, 2023</div>
                     <div class="timeline-content">
                         <h3>Finding the Unabomber</h3>
@@ -86,7 +99,7 @@
                 </div>
 
                 <!-- Event Item -->
-                <div class="timeline-item">
+                <div class="timeline-item" data-category="talk">
                     <div class="timeline-date">Jan 27, 2023</div>
                     <div class="timeline-content">
                         <h3>Everything, Everywhere, All at Once</h3>
@@ -96,7 +109,7 @@
                 </div>
 
                 <!-- Event Item -->
-                <div class="timeline-item">
+                <div class="timeline-item" data-category="talk">
                     <div class="timeline-date">Nov 24, 2022</div>
                     <div class="timeline-content">
                         <h3>Meet a Mathematician</h3>
@@ -106,7 +119,7 @@
                 </div>
 
                 <!-- Event Item -->
-                <div class="timeline-item">
+                <div class="timeline-item" data-category="social">
                     <div class="timeline-date">Nov 18, 2022</div>
                     <div class="timeline-content">
                         <h3>Strategic Game Night</h3>
@@ -116,7 +129,7 @@
                 </div>
 
                 <!-- Event Item -->
-                <div class="timeline-item">
+                <div class="timeline-item" data-category="social">
                     <div class="timeline-date">Oct 25, 2022</div>
                     <div class="timeline-content">
                         <h3>The Man Who Never Lived</h3>
@@ -126,7 +139,7 @@
                 </div>
 
                 <!-- Event Item -->
-                <div class="timeline-item">
+                <div class="timeline-item" data-category="social">
                     <div class="timeline-date">April 27, 2022</div>
                     <div class="timeline-content">
                         <h3>LEGACY</h3>
@@ -135,6 +148,42 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section id="team">
+        <div class="container">
+            <h2 class="section-title">The Council</h2>
+            <div class="team-grid">
+                <!-- Member 1 -->
+                <div class="team-card">
+                    <div class="member-img-placeholder">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h3>Alex Riemann</h3>
+                    <p class="role">Convenor</p>
+                    <p class="bio">Passionate about Number Theory and ensuring everyone gets pizza at meetings.</p>
+                </div>
+                <!-- Member 2 -->
+                <div class="team-card">
+                    <div class="member-img-placeholder">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                    <h3>Sarah Noether</h3>
+                    <p class="role">Co-Convenor</p>
+                    <p class="bio">Loves Abstract Algebra and organizing chaos into structured events.</p>
+                </div>
+                <!-- Member 3 -->
+                <div class="team-card">
+                    <div class="member-img-placeholder">
+                        <i class="fas fa-pen-fancy"></i>
+                    </div>
+                    <h3>Euler Smith</h3>
+                    <p class="role">Treasurer</p>
+                    <p class="bio">Keeps the finances as balanced as a perfect equation.</p>
+                </div>
             </div>
         </div>
     </section>

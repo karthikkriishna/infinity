@@ -2,7 +2,7 @@
 const quotes = [
     { text: "In mathematics, you don’t understand things. You just get used to them.", author: "John von Neumann" },
     { text: "A mathematician is a blind man in a dark room looking for a black cat which isn't there.", author: "Charles Darwin" },
-    { text: "There are three kinds of lies: lies, damned lies, and statistics.", author: "Mark Twain (attributed to Benjamin Disraeli)" },
+    { text: "There are three kinds of lies: lies, damned lies, and statistics.", author: "Mark Twain" },
     { text: "If I were again beginning my studies, I would follow the advice of Plato and start with mathematics.", author: "Galileo Galilei" },
     { text: "I have heard that [a former student] has become a poet. I can well believe it; he did not have enough imagination to be a mathematician.", author: "David Hilbert" },
     { text: "Arithmetic is being able to count up to twenty without taking off your shoes.", author: "Mickey Mouse" },
@@ -25,7 +25,6 @@ const quotes = [
     { text: "Geometry is knowledge of the eternally existent.", author: "Plato" },
     { text: "No human investigation can be called true science without passing through mathematical tests.", author: "Leonardo da Vinci" },
     { text: "Mathematics is the queen of the sciences and number theory is the queen of mathematics.", author: "Carl Friedrich Gauss" },
-    { text: "To isolate mathematics from the practical demands of the sciences is to invite the sterility of a cow that is no longer pregnant with none but ghosts.", author: "Pafnuty Chebyshev" },
     { text: "Without mathematics, there’s nothing you can do. Everything around you is mathematics. Everything around you is numbers.", author: "Shakuntala Devi" },
     { text: "Just as a musician can hear the notes on a page, a mathematician can see the logic in an equation.", author: "Marcus du Sautoy" },
     { text: "One of the most amazing things about mathematics is the people who do it.", author: "Lárus Thorlacius" },
@@ -42,34 +41,7 @@ const quotes = [
     { text: "Mathematics involves no patents.", author: "Craig Venter" },
     { text: "A mathematician is a machine for turning coffee into theorems.", author: "Alfréd Rényi" },
     { text: "My brain is open.", author: "Paul Erdős" },
-    { text: "Clouds are not spheres, mountains are not cones, coastlines are not circles, and bark is not smooth, nor does lightning travel in a straight line.", author: "Benoît Mandelbrot" },
-    { text: "If you ask a mathematician to solve a problem, he will first show you that the problem is unsolved, then he will show you that it is unsolvable.", author: "Anonymous" },
-    { text: "There is no branch of mathematics, however abstract, which may not some day be capable of application to phenomena of the real world.", author: "Nikolai Lobachevsky" },
-    { text: "There was a young lady named Bright,
-Who traveled much faster than light.
-She started one day
-In a relative way,
-And returned on the previous night.", author: "A.H. Reginald Buller" },
-    { text: "A sphere is a shape that’s quite rare,
-With a surface that’s perfectly bare.
-No corners or edges,
-No angles or ledges,
-Just a curve that is perfectly fair.", author: "Unknown" },
-    { text: "It’s a number commonly seen,
-Calculated by man and machine.
-Starts with 3 point 1 4,
-But there’s infinitely more,
-It’s the circle’s ratio supreme.", author: "Unknown" },
-    { text: "A mathematician named Phipps,
-Drank coffee in small little sips.
-'For a mug,' he would say,
-'Is a donut today,
-If you look at the geometry of lips!'", author: "Unknown" },
-    { text: "There was an old fellow named Euclid,
-Who looked at a circle and drew lid.
-'The radius,' said he,
-'Is as plain as can be,
-Whatever the size of the new lid.'", author: "Unknown" }
+    { text: "If you ask a mathematician to solve a problem, he will first show you that the problem is unsolved, then he will show you that it is unsolvable.", author: "Anonymous" }
 ];
 
 // Quote Generator Logic
@@ -78,31 +50,23 @@ const quoteAuthor = document.getElementById('quote-author');
 const quoteButton = document.getElementById('new-quote-btn');
 
 function generateQuote() {
-    // Basic random selection
     const randomIndex = Math.floor(Math.random() * quotes.length);
     const selectedQuote = quotes[randomIndex];
 
-    // Fade out
     quoteText.style.opacity = 0;
     quoteAuthor.style.opacity = 0;
 
     setTimeout(() => {
-        // Update Content
         quoteText.innerText = selectedQuote.text;
         quoteAuthor.innerText = `— ${selectedQuote.author}`;
-        
-        // Fade in
         quoteText.style.opacity = 1;
         quoteAuthor.style.opacity = 1;
     }, 300);
 }
 
-// Add CSS transitions via JS to ensure they apply after load
-quoteText.style.transition = "opacity 0.3s ease";
-quoteAuthor.style.transition = "opacity 0.3s ease";
-
-// Listeners
-quoteButton.addEventListener('click', generateQuote);
+if(quoteButton) {
+    quoteButton.addEventListener('click', generateQuote);
+}
 
 // Navbar Scroll Effect
 window.addEventListener('scroll', function() {
@@ -116,35 +80,150 @@ window.addEventListener('scroll', function() {
     }
 });
 
-// Reveal Elements on Scroll
+// Scroll Reveal Animation
 function reveal() {
     var reveals = document.querySelectorAll(".timeline-item");
-
     for (var i = 0; i < reveals.length; i++) {
         var windowHeight = window.innerHeight;
         var elementTop = reveals[i].getBoundingClientRect().top;
         var elementVisible = 150;
-
         if (elementTop < windowHeight - elementVisible) {
             reveals[i].classList.add("active");
         }
     }
 }
-
 window.addEventListener("scroll", reveal);
+reveal(); // Trigger once on load
 
-// Add active class style in JS injection or simple class toggle
-// Adding specific CSS for the reveal animation here for completeness
-const style = document.createElement('style');
-style.innerHTML = `
-    .timeline-item {
-        opacity: 0;
-        transform: translateY(30px);
-        transition: all 0.6s ease-out;
+// Mobile Navigation
+const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
+const links = document.querySelectorAll('.nav-links a');
+
+if (hamburger) {
+    hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        // Animate hamburger to X (optional, keeping simple for now)
+    });
+}
+
+// Close mobile menu when a link is clicked
+links.forEach(link => {
+    link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+    });
+});
+
+// Event Filtering
+const filterBtns = document.querySelectorAll('.filter-btn');
+const timelineItems = document.querySelectorAll('.timeline-item');
+
+filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Remove active class from all buttons
+        filterBtns.forEach(b => b.classList.remove('active'));
+        // Add active to clicked
+        btn.classList.add('active');
+
+        const filterValue = btn.getAttribute('data-filter');
+
+        timelineItems.forEach(item => {
+            if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                item.style.display = 'block';
+                // Small timeout to allow display:block to apply before opacity transition
+                setTimeout(() => item.classList.add('active'), 50); 
+            } else {
+                item.style.display = 'none';
+                item.classList.remove('active');
+            }
+        });
+        
+        // Re-trigger reveal to ensure visible items are animated
+        reveal();
+    });
+});
+
+// Hero Canvas Animation (Constellation Effect)
+const canvas = document.getElementById('hero-canvas');
+if (canvas) {
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particlesArray;
+
+    // Handle resize
+    window.addEventListener('resize', () => {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        init();
+    });
+
+    class Particle {
+        constructor() {
+            this.x = Math.random() * canvas.width;
+            this.y = Math.random() * canvas.height;
+            this.directionX = (Math.random() * 0.4) - 0.2;
+            this.directionY = (Math.random() * 0.4) - 0.2;
+            this.size = Math.random() * 2 + 1;
+            this.color = '#64ffda';
+        }
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+            ctx.fillStyle = this.color;
+            ctx.fill();
+        }
+        update() {
+            if (this.x > canvas.width || this.x < 0) {
+                this.directionX = -this.directionX;
+            }
+            if (this.y > canvas.height || this.y < 0) {
+                this.directionY = -this.directionY;
+            }
+            this.x += this.directionX;
+            this.y += this.directionY;
+            this.draw();
+        }
     }
-    .timeline-item.active {
-        opacity: 1;
-        transform: translateY(0);
+
+    function init() {
+        particlesArray = [];
+        let numberOfParticles = (canvas.height * canvas.width) / 9000;
+        for (let i = 0; i < numberOfParticles; i++) {
+            particlesArray.push(new Particle());
+        }
     }
-`;
-document.head.appendChild(style);
+
+    function animate() {
+        requestAnimationFrame(animate);
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        for (let i = 0; i < particlesArray.length; i++) {
+            particlesArray[i].update();
+        }
+        connect();
+    }
+
+    function connect() {
+        let opacityValue = 1;
+        for (let a = 0; a < particlesArray.length; a++) {
+            for (let b = a; b < particlesArray.length; b++) {
+                let distance = ((particlesArray[a].x - particlesArray[b].x) * (particlesArray[a].x - particlesArray[b].x)) +
+                               ((particlesArray[a].y - particlesArray[b].y) * (particlesArray[a].y - particlesArray[b].y));
+                if (distance < (canvas.width/7) * (canvas.height/7)) {
+                    opacityValue = 1 - (distance/20000);
+                    ctx.strokeStyle = 'rgba(100, 255, 218,' + opacityValue + ')';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(particlesArray[a].x, particlesArray[a].y);
+                    ctx.lineTo(particlesArray[b].x, particlesArray[b].y);
+                    ctx.stroke();
+                }
+            }
+        }
+    }
+
+    init();
+    animate();
+}

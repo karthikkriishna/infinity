@@ -1,5 +1,6 @@
 /**
- * INFINITY CLUB - 15 VARIATIONS ENGINE
+ * INFINITY CLUB - 15 VARIATIONS ENGINE (UPGRADED)
+ * Features: High Interactivity, Richer Visuals, Dynamic Physics
  */
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -9,33 +10,37 @@ document.addEventListener('DOMContentLoaded', () => {
     initScrollReveal();
 });
 
+// --- GLOBAL MOUSE TRACKING ---
+const mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2, down: false };
+window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+window.addEventListener('mousedown', () => mouse.down = true);
+window.addEventListener('mouseup', () => mouse.down = false);
+window.addEventListener('touchstart', e => { mouse.x = e.touches[0].clientX; mouse.y = e.touches[0].clientY; mouse.down = true; });
+window.addEventListener('touchend', () => mouse.down = false);
+
 // --- THEME MANAGER ---
 const themes = [
-    { id: 1, name: "Cosmic Network", accent: "#64ffda", type: "network" },
-    { id: 2, name: "Lorenz Attractor", accent: "#ff6b6b", type: "lorenz" },
-    { id: 3, name: "Matrix Rain", accent: "#00ff41", type: "matrix" },
-    { id: 4, name: "Möbius Strip", accent: "#e0aaff", type: "mobius" },
-    { id: 5, name: "Game of Life", accent: "#f77f00", type: "gol" },
-    { id: 6, name: "Fractal Tree", accent: "#4cc9f0", type: "tree" },
-    { id: 7, name: "Spirograph", accent: "#f72585", type: "spiro" },
-    { id: 8, name: "Starfield Warp", accent: "#ffffff", type: "warp" },
-    { id: 9, name: "Fluid Flow", accent: "#00b4d8", type: "fluid" },
-    { id: 10, name: "Sine Waves", accent: "#ff9e00", type: "sine" },
-    { id: 11, name: "Voronoi Cells", accent: "#9d4edd", type: "voronoi" },
-    { id: 12, name: "Hex Grid", accent: "#ffd60a", type: "hex" },
-    { id: 13, name: "Binary Void", accent: "#3a86ff", type: "binary" },
-    { id: 14, name: "Golden Spiral", accent: "#d4af37", type: "spiral" },
-    { id: 15, name: "Chaos Pendulum", accent: "#ef476f", type: "pendulum" }
+    { id: 1, name: "Cosmic Neural Net", accent: "#64ffda", type: "network" },
+    { id: 2, name: "Interactive Lorenz", accent: "#ff6b6b", type: "lorenz" },
+    { id: 3, name: "Hyper Matrix", accent: "#00ff41", type: "matrix" },
+    { id: 4, name: "Möbius Strip 3D", accent: "#e0aaff", type: "mobius" },
+    { id: 5, name: "Interactive Life", accent: "#f77f00", type: "gol" },
+    { id: 6, name: "Windy Fractal", accent: "#4cc9f0", type: "tree" },
+    { id: 7, name: "Morphing Spiro", accent: "#f72585", type: "spiro" },
+    { id: 8, name: "Hyperdrive", accent: "#ffffff", type: "warp" },
+    { id: 9, name: "Neon Fluid", accent: "#00b4d8", type: "fluid" },
+    { id: 10, name: "Sonic Waves", accent: "#ff9e00", type: "sine" },
+    { id: 11, name: "Active Voronoi", accent: "#9d4edd", type: "voronoi" },
+    { id: 12, name: "Cyber Hex", accent: "#ffd60a", type: "hex" },
+    { id: 13, name: "Data Stream", accent: "#3a86ff", type: "binary" },
+    { id: 14, name: "Hypnotic Spiral", accent: "#d4af37", type: "spiral" },
+    { id: 15, name: "Chaos Physics", accent: "#ef476f", type: "pendulum" }
 ];
 
 function initThemeManager() {
-    // 1. Select random theme on load
     let currentThemeIndex = Math.floor(Math.random() * themes.length);
-    
-    // 2. Apply Theme
     applyTheme(currentThemeIndex);
 
-    // 3. Switcher Logic
     const switcher = document.getElementById('theme-switcher');
     if(switcher) {
         switcher.addEventListener('click', () => {
@@ -50,45 +55,42 @@ function applyTheme(index) {
     const root = document.documentElement;
     const indicator = document.getElementById('theme-name');
     
-    // Update Colors
     root.style.setProperty('--accent', theme.accent);
-    // Convert hex to RGB for rgba() usage
     const hex = theme.accent.substring(1);
     const r = parseInt(hex.substring(0,2), 16);
     const g = parseInt(hex.substring(2,4), 16);
     const b = parseInt(hex.substring(4,6), 16);
     root.style.setProperty('--accent-rgb', `${r}, ${g}, ${b}`);
     
-    // Update UI Text
     if(indicator) indicator.textContent = `${theme.id}. ${theme.name}`;
     
-    // Initialize Canvas Background
     initBackground(theme.type, theme.accent);
 }
 
 // --- BACKGROUND ENGINE ---
-let animationId; // To cancel previous loops
+let animationId; 
 
 function initBackground(type, color) {
     const canvas = document.getElementById('bg-canvas');
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     
-    // Cleanup previous animation
     if (animationId) cancelAnimationFrame(animationId);
     
-    // Reset Canvas
     let w, h;
     const resize = () => {
         w = canvas.width = window.innerWidth;
         h = canvas.height = window.innerHeight;
     };
-    window.removeEventListener('resize', canvas.resizeHandler); // Remove old listener
+    window.removeEventListener('resize', canvas.resizeHandler);
     canvas.resizeHandler = resize;
     window.addEventListener('resize', resize);
     resize();
 
-    // --- ANIMATION SWITCH ---
+    // Reset context
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+
     switch(type) {
         case 'network': runNetwork(ctx, w, h, color); break;
         case 'lorenz': runLorenz(ctx, w, h, color); break;
@@ -109,29 +111,46 @@ function initBackground(type, color) {
 }
 
 /* ===========================
-   THE 15 ANIMATION FUNCTIONS
+   15 UPGRADED ANIMATIONS
    =========================== */
 
-// 1. Cosmic Network
+// 1. Cosmic Neural Net (Mouse interaction + More particles)
 function runNetwork(ctx, w, h, color) {
-    const particles = Array.from({length: 60}, () => ({
+    const particles = Array.from({length: 100}, () => ({
         x: Math.random() * w, y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5
+        vx: (Math.random() - 0.5) * 0.5, vy: (Math.random() - 0.5) * 0.5,
+        size: Math.random() * 2 + 1
     }));
+    
     function loop() {
         ctx.clearRect(0,0,w,h);
         ctx.fillStyle = color;
         ctx.strokeStyle = color;
+        
         particles.forEach((p, i) => {
             p.x += p.vx; p.y += p.vy;
+            
+            // Mouse repulsion
+            const dx = mouse.x - p.x;
+            const dy = mouse.y - p.y;
+            const dist = Math.sqrt(dx*dx + dy*dy);
+            if(dist < 150) {
+                const force = (150 - dist) / 150;
+                p.vx -= (dx/dist) * force * 0.5;
+                p.vy -= (dy/dist) * force * 0.5;
+            }
+
             if(p.x < 0 || p.x > w) p.vx *= -1;
             if(p.y < 0 || p.y > h) p.vy *= -1;
-            ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fill();
+            
+            ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill();
+            
             for(let j=i+1; j<particles.length; j++){
                 let p2 = particles[j];
                 let d = Math.hypot(p.x-p2.x, p.y-p2.y);
-                if(d < 150) {
-                    ctx.globalAlpha = 1 - d/150; ctx.lineWidth = 0.5;
+                if(d < 120) {
+                    ctx.globalAlpha = 1 - d/120; 
+                    ctx.lineWidth = 0.5;
                     ctx.beginPath(); ctx.moveTo(p.x, p.y); ctx.lineTo(p2.x, p2.y); ctx.stroke();
                 }
             }
@@ -142,33 +161,47 @@ function runNetwork(ctx, w, h, color) {
     loop();
 }
 
-// 2. Lorenz Attractor
+// 2. Interactive Lorenz (Rotate with mouse)
 function runLorenz(ctx, w, h, color) {
-    let x = 0.1, y = 0, z = 0;
+    let points = [], x=0.1, y=0, z=0;
     const sigma = 10, rho = 28, beta = 8/3;
-    const points = [];
+    let rotX = 0, rotY = 0;
+
     function loop() {
-        // Fade effect
-        ctx.fillStyle = 'rgba(10, 25, 47, 0.05)';
+        ctx.fillStyle = 'rgba(10, 25, 47, 0.1)'; // Longer trails
         ctx.fillRect(0,0,w,h);
         
+        // Interaction
+        rotY += (mouse.x - w/2) * 0.0001;
+        rotX += (mouse.y - h/2) * 0.0001;
+
         let dt = 0.01;
         let dx = (sigma * (y - x)) * dt;
         let dy = (x * (rho - z) - y) * dt;
         let dz = (x * y - beta * z) * dt;
         x += dx; y += dy; z += dz;
         points.push({x, y, z});
-        if(points.length > 2000) points.shift();
+        if(points.length > 1500) points.shift();
 
         ctx.beginPath();
         ctx.strokeStyle = color;
-        ctx.lineWidth = 0.5;
-        const cx = w/2, cy = h/2, scale = 15;
+        ctx.lineWidth = 1.5;
+        const cx = w/2, cy = h/2, scale = 12;
+        
         for(let i=1; i<points.length; i++){
-            // Simple rotation
             let p = points[i], prev = points[i-1];
-            ctx.moveTo(cx + prev.x*scale, cy + prev.y*scale);
-            ctx.lineTo(cx + p.x*scale, cy + p.y*scale);
+            
+            // 3D Rotation
+            let x1 = p.x * Math.cos(rotY) - p.z * Math.sin(rotY);
+            let z1 = p.x * Math.sin(rotY) + p.z * Math.cos(rotY);
+            let y1 = p.y * Math.cos(rotX) - z1 * Math.sin(rotX);
+            
+            let x2 = prev.x * Math.cos(rotY) - prev.z * Math.sin(rotY);
+            let z2 = prev.x * Math.sin(rotY) + prev.z * Math.cos(rotY);
+            let y2 = prev.y * Math.cos(rotX) - z2 * Math.sin(rotX);
+
+            ctx.moveTo(cx + x2*scale, cy + y2*scale);
+            ctx.lineTo(cx + x1*scale, cy + y1*scale);
         }
         ctx.stroke();
         animationId = requestAnimationFrame(loop);
@@ -176,18 +209,30 @@ function runLorenz(ctx, w, h, color) {
     loop();
 }
 
-// 3. Matrix Rain
+// 3. Hyper Matrix (Mouse disruption)
 function runMatrix(ctx, w, h, color) {
     const cols = Math.floor(w / 20);
     const drops = Array(cols).fill(1);
-    ctx.font = "15px monospace";
+    ctx.font = "16px monospace";
+    
     function loop() {
         ctx.fillStyle = 'rgba(10, 25, 47, 0.1)';
         ctx.fillRect(0,0,w,h);
         ctx.fillStyle = color;
+        
         drops.forEach((y, i) => {
-            const text = String.fromCharCode(Math.random() * 128);
-            ctx.fillText(text, i*20, y*20);
+            const char = String.fromCharCode(0x30A0 + Math.random() * 96);
+            const x = i*20;
+            
+            // Mouse disruption
+            const dist = Math.abs(mouse.x - x);
+            if(dist < 50 && Math.abs(mouse.y - y*20) < 50) {
+                ctx.fillStyle = '#fff'; // Highlight near mouse
+            } else {
+                ctx.fillStyle = color;
+            }
+
+            ctx.fillText(char, x, y*20);
             if(y*20 > h && Math.random() > 0.975) drops[i] = 0;
             drops[i]++;
         });
@@ -196,7 +241,7 @@ function runMatrix(ctx, w, h, color) {
     loop();
 }
 
-// 4. Möbius Strip (Wireframe)
+// 4. Möbius Strip 3D (Full rotation control)
 function runMobius(ctx, w, h, color) {
     let t = 0;
     function loop() {
@@ -204,118 +249,127 @@ function runMobius(ctx, w, h, color) {
         ctx.strokeStyle = color;
         ctx.lineWidth = 0.5;
         const cx = w/2, cy = h/2;
-        t += 0.01;
-        ctx.beginPath();
+        t += 0.02;
+        
+        let rotX = (mouse.y - h/2) * 0.005;
+        let rotY = (mouse.x - w/2) * 0.005;
+
         for(let i = 0; i < Math.PI*4; i+=0.1) {
             let u = i;
-            let v = 0; // center line
             let radius = 150;
-            let x = (radius + v * Math.cos(u/2)) * Math.cos(u);
-            let y = (radius + v * Math.cos(u/2)) * Math.sin(u);
-            let z = v * Math.sin(u/2);
             
-            // Rotate
-            let x2 = x * Math.cos(t) - z * Math.sin(t);
-            let y2 = y; 
-            
-            // Draw multiple strips
-            for(let j=-50; j<=50; j+=25) {
-                let x_ = (radius + j * Math.cos(u/2)) * Math.cos(u);
-                let y_ = (radius + j * Math.cos(u/2)) * Math.sin(u);
-                let z_ = j * Math.sin(u/2);
-                let xr = x_ * Math.cos(t) - z_ * Math.sin(t);
-                let yr = y_ * Math.cos(t*0.5) - x_ * Math.sin(t*0.5); // tumbling
-                ctx.rect(cx + xr, cy + yr, 1, 1);
+            // Draw strip width
+            for(let j=-40; j<=40; j+=20) {
+                let x = (radius + j * Math.cos(u/2)) * Math.cos(u);
+                let y = (radius + j * Math.cos(u/2)) * Math.sin(u);
+                let z = j * Math.sin(u/2);
+                
+                // Apply Mouse Rotation
+                let x1 = x * Math.cos(rotY) - z * Math.sin(rotY);
+                let z1 = x * Math.sin(rotY) + z * Math.cos(rotY);
+                let y1 = y * Math.cos(rotX) - z1 * Math.sin(rotX);
+                
+                // Auto Spin
+                let x2 = x1 * Math.cos(t) - y1 * Math.sin(t);
+                let y2 = x1 * Math.sin(t) + y1 * Math.cos(t);
+
+                // Point plotting instead of lines for cooler effect
+                ctx.beginPath();
+                ctx.arc(cx + x2, cy + y2, 1, 0, Math.PI*2);
+                ctx.fill();
             }
         }
-        ctx.stroke();
+        ctx.fillStyle = color;
         animationId = requestAnimationFrame(loop);
     }
     loop();
 }
 
-// 5. Game of Life
+// 5. Interactive Life (Paint cells)
 function runGOL(ctx, w, h, color) {
-    const size = 10;
-    const rows = Math.ceil(h/size);
-    const cols = Math.ceil(w/size);
-    let grid = Array(cols).fill().map(() => Array(rows).fill().map(() => Math.random() > 0.85 ? 1 : 0));
+    const size = 8;
+    const cols = Math.ceil(w/size), rows = Math.ceil(h/size);
+    let grid = Array(cols).fill().map(() => Array(rows).fill().map(() => Math.random() > 0.9 ? 1 : 0));
     
     function loop() {
-        // Don't clear, let it build up slightly or clear full
-        ctx.clearRect(0,0,w,h); 
+        ctx.fillStyle = 'rgba(10, 25, 47, 0.3)';
+        ctx.fillRect(0,0,w,h);
         ctx.fillStyle = color;
         
+        // Paint with mouse
+        if(mouse.down) {
+            const mx = Math.floor(mouse.x / size);
+            const my = Math.floor(mouse.y / size);
+            if(mx >=0 && mx < cols && my >=0 && my < rows) {
+                grid[mx][my] = 1;
+                grid[(mx+1)%cols][my] = 1; // Brush size 2
+                grid[mx][(my+1)%rows] = 1;
+            }
+        }
+
         let next = grid.map(arr => [...arr]);
-        
         for(let i=0; i<cols; i++) {
             for(let j=0; j<rows; j++) {
-                let state = grid[i][j];
-                if(state === 1) ctx.fillRect(i*size, j*size, size-1, size-1);
-                
-                // Logic
+                if(grid[i][j]) ctx.fillRect(i*size, j*size, size-1, size-1);
                 let sum = 0;
-                for(let I=-1; I<2; I++){
-                    for(let J=-1; J<2; J++){
-                        let col = (i+I+cols)%cols;
-                        let row = (j+J+rows)%rows;
-                        sum += grid[col][row];
-                    }
-                }
-                sum -= state;
-                if(state == 0 && sum == 3) next[i][j] = 1;
-                else if(state == 1 && (sum < 2 || sum > 3)) next[i][j] = 0;
+                for(let I=-1; I<2; I++) for(let J=-1; J<2; J++) sum += grid[(i+I+cols)%cols][(j+J+rows)%rows];
+                sum -= grid[i][j];
+                if(grid[i][j] === 0 && sum === 3) next[i][j] = 1;
+                else if(grid[i][j] === 1 && (sum < 2 || sum > 3)) next[i][j] = 0;
             }
         }
         grid = next;
-        setTimeout(() => {
-            animationId = requestAnimationFrame(loop);
-        }, 100); // slow down
+        setTimeout(() => animationId = requestAnimationFrame(loop), 50);
     }
     loop();
 }
 
-// 6. Fractal Tree
+// 6. Windy Fractal (Mouse controls wind)
 function runTree(ctx, w, h, color) {
-    let angle = 0;
-    function drawBranch(len, x, y, a) {
+    function drawBranch(len, x, y, a, width) {
         ctx.beginPath();
         ctx.moveTo(x, y);
         let x2 = x + len * Math.sin(a);
         let y2 = y - len * Math.cos(a);
+        ctx.lineWidth = width;
         ctx.lineTo(x2, y2);
         ctx.stroke();
-        if(len > 10) {
-            drawBranch(len * 0.7, x2, y2, a + angle);
-            drawBranch(len * 0.7, x2, y2, a - angle);
+        if(len > 5) {
+            drawBranch(len * 0.7, x2, y2, a + mouseX_influence, width * 0.7);
+            drawBranch(len * 0.7, x2, y2, a - mouseX_influence, width * 0.7);
         }
     }
+    let mouseX_influence = 0.5;
     function loop() {
         ctx.clearRect(0,0,w,h);
         ctx.strokeStyle = color;
-        ctx.lineWidth = 1;
-        angle = Math.PI / 4 * Math.sin(Date.now() * 0.0005) + 0.5;
-        drawBranch(100, w/2, h, 0);
+        // Map mouse X to angle variance (Wind)
+        let targetAngle = (mouse.x / w) * Math.PI / 2;
+        mouseX_influence += (targetAngle - mouseX_influence) * 0.1;
+        
+        drawBranch(120, w/2, h, 0, 10);
         animationId = requestAnimationFrame(loop);
     }
     loop();
 }
 
-// 7. Spirograph
+// 7. Morphing Spiro (Mouse shape shift)
 function runSpirograph(ctx, w, h, color) {
     let t = 0;
     function loop() {
-        // Trail effect
-        ctx.fillStyle = 'rgba(10, 25, 47, 0.05)';
+        ctx.fillStyle = 'rgba(10, 25, 47, 0.1)';
         ctx.fillRect(0,0,w,h);
-        
         ctx.strokeStyle = color;
         ctx.beginPath();
         const cx = w/2, cy = h/2;
-        let R = 100, r = 22, a = 60;
         
-        for(let i=0; i<10; i++) {
-            t += 0.05;
+        // Mouse controls parameters
+        let R = 100 + (mouse.x / w) * 100;
+        let r = 20 + (mouse.y / h) * 50;
+        let a = 60;
+        
+        for(let i=0; i<20; i++) {
+            t += 0.1;
             let x = cx + (R-r)*Math.cos(t) + a*Math.cos(((R-r)/r)*t);
             let y = cy + (R-r)*Math.sin(t) - a*Math.sin(((R-r)/r)*t);
             if(i==0) ctx.moveTo(x, y);
@@ -327,29 +381,34 @@ function runSpirograph(ctx, w, h, color) {
     loop();
 }
 
-// 8. Starfield Warp
+// 8. Hyperdrive (Mouse controls warp direction)
 function runWarp(ctx, w, h, color) {
-    const stars = Array(200).fill().map(() => ({
+    const stars = Array(300).fill().map(() => ({
         x: Math.random() * w - w/2,
         y: Math.random() * h - h/2,
         z: Math.random() * w
     }));
     function loop() {
-        ctx.fillStyle = '#0a192f';
+        ctx.fillStyle = 'rgba(10, 25, 47, 0.3)'; // Trails
         ctx.fillRect(0,0,w,h);
         ctx.fillStyle = color;
         
+        // Shift center based on mouse
+        let cx = w/2 + (mouse.x - w/2) * 0.5;
+        let cy = h/2 + (mouse.y - h/2) * 0.5;
+
         stars.forEach(s => {
-            s.z -= 5; // speed
+            s.z -= 10; // Speed
             if(s.z <= 0) {
                 s.x = Math.random() * w - w/2;
                 s.y = Math.random() * h - h/2;
                 s.z = w;
             }
             let k = 128.0 / s.z;
-            let px = s.x * k + w/2;
-            let py = s.y * k + h/2;
-            let sz = (1 - s.z / w) * 3;
+            let px = s.x * k + cx;
+            let py = s.y * k + cy;
+            let sz = (1 - s.z / w) * 4;
+            
             if(px >= 0 && px <= w && py >= 0 && py <= h) {
                 ctx.beginPath(); ctx.arc(px, py, sz, 0, Math.PI*2); ctx.fill();
             }
@@ -359,22 +418,37 @@ function runWarp(ctx, w, h, color) {
     loop();
 }
 
-// 9. Fluid Flow (Simulated with particles)
+// 9. Neon Fluid (Stronger Interaction)
 function runFluid(ctx, w, h, color) {
-    const particles = Array(100).fill().map(() => ({
+    const particles = Array(200).fill().map(() => ({
         x: Math.random() * w, y: Math.random() * h,
+        vx: 0, vy: 0,
         angle: Math.random() * Math.PI * 2
     }));
     function loop() {
-        ctx.fillStyle = 'rgba(10, 25, 47, 0.1)';
+        ctx.fillStyle = 'rgba(10, 25, 47, 0.05)';
         ctx.fillRect(0,0,w,h);
         ctx.fillStyle = color;
+        
         particles.forEach(p => {
-            // Perlin-ish noise simulation
+            // Flow field
             let noise = Math.sin(p.x * 0.005) + Math.cos(p.y * 0.005);
-            p.angle += noise * 0.1;
-            p.x += Math.cos(p.angle) * 2;
-            p.y += Math.sin(p.angle) * 2;
+            p.angle += noise * 0.05;
+            p.vx += Math.cos(p.angle) * 0.2;
+            p.vy += Math.sin(p.angle) * 0.2;
+            
+            // Mouse push
+            let dx = mouse.x - p.x;
+            let dy = mouse.y - p.y;
+            let d = Math.sqrt(dx*dx + dy*dy);
+            if(d < 100) {
+                p.vx -= dx * 0.05;
+                p.vy -= dy * 0.05;
+            }
+            
+            // Friction
+            p.vx *= 0.95; p.vy *= 0.95;
+            p.x += p.vx; p.y += p.vy;
             
             if(p.x < 0) p.x = w; if(p.x > w) p.x = 0;
             if(p.y < 0) p.y = h; if(p.y > h) p.y = 0;
@@ -386,18 +460,22 @@ function runFluid(ctx, w, h, color) {
     loop();
 }
 
-// 10. Sine Waves
+// 10. Sonic Waves (Mouse Frequency)
 function runSine(ctx, w, h, color) {
     let t = 0;
     function loop() {
         ctx.clearRect(0,0,w,h);
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
-        t += 0.02;
+        t += 0.05;
+        
+        let amplitude = (mouse.y / h) * 100;
+        let freq = 0.01 + (mouse.x / w) * 0.05;
+
         for(let i=0; i<5; i++) {
             ctx.beginPath();
             for(let x=0; x<w; x+=5) {
-                let y = h/2 + Math.sin(x * 0.01 + t + i) * 50 * Math.sin(t*0.5);
+                let y = h/2 + Math.sin(x * freq + t + i) * amplitude * Math.sin(t*0.5);
                 ctx.lineTo(x, y);
             }
             ctx.stroke();
@@ -407,30 +485,38 @@ function runSine(ctx, w, h, color) {
     loop();
 }
 
-// 11. Voronoi (Dot based)
+// 11. Active Voronoi (Mouse is a cell)
 function runVoronoi(ctx, w, h, color) {
     const points = Array(15).fill().map(() => ({
         x: Math.random() * w, y: Math.random() * h,
-        vx: (Math.random() - 0.5), vy: (Math.random() - 0.5)
+        vx: (Math.random()-0.5), vy: (Math.random()-0.5)
     }));
     function loop() {
         ctx.clearRect(0,0,w,h);
         ctx.strokeStyle = color;
         ctx.lineWidth = 0.2;
         
-        points.forEach(p => {
+        // Add mouse as a dynamic point
+        const activePoints = [...points, {x: mouse.x, y: mouse.y, vx:0, vy:0}];
+        
+        activePoints.forEach(p => {
             p.x += p.vx; p.y += p.vy;
             if(p.x < 0 || p.x > w) p.vx *= -1;
             if(p.y < 0 || p.y > h) p.vy *= -1;
-            ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fillStyle = color; ctx.fill();
+            
+            ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI*2); 
+            ctx.fillStyle = (p === activePoints[activePoints.length-1]) ? '#fff' : color; // Highlight mouse
+            ctx.fill();
         });
         
-        // Draw simplistic triangulation (not true voronoi, but cool)
-        for(let i=0; i<points.length; i++){
-            for(let j=i+1; j<points.length; j++){
-                let d = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
-                if(d < 200) {
-                    ctx.beginPath(); ctx.moveTo(points[i].x, points[i].y); ctx.lineTo(points[j].x, points[j].y); ctx.stroke();
+        for(let i=0; i<activePoints.length; i++){
+            for(let j=i+1; j<activePoints.length; j++){
+                let d = Math.hypot(activePoints[i].x - activePoints[j].x, activePoints[i].y - activePoints[j].y);
+                if(d < 250) {
+                    ctx.beginPath(); 
+                    ctx.moveTo(activePoints[i].x, activePoints[i].y); 
+                    ctx.lineTo(activePoints[j].x, activePoints[j].y); 
+                    ctx.stroke();
                 }
             }
         }
@@ -439,14 +525,12 @@ function runVoronoi(ctx, w, h, color) {
     loop();
 }
 
-// 12. Hex Grid
+// 12. Cyber Hex (Light up on hover)
 function runHex(ctx, w, h, color) {
     let t = 0;
     function drawHex(x, y, r) {
         ctx.beginPath();
-        for(let i=0; i<6; i++) {
-            ctx.lineTo(x + r * Math.cos(i*Math.PI/3), y + r * Math.sin(i*Math.PI/3));
-        }
+        for(let i=0; i<6; i++) ctx.lineTo(x + r * Math.cos(i*Math.PI/3), y + r * Math.sin(i*Math.PI/3));
         ctx.closePath();
         ctx.stroke();
     }
@@ -458,34 +542,59 @@ function runHex(ctx, w, h, color) {
         for(let y=0; y<h+size; y+=size*1.5) {
             for(let x=0; x<w+size; x+=size*1.732) {
                 let offset = (Math.floor(y/(size*1.5))%2) * (size*1.732/2);
-                let pulse = Math.sin(t + x*0.01 + y*0.01) * 10;
-                drawHex(x + offset, y, size/2 + pulse);
+                let px = x + offset;
+                
+                // Mouse highlight
+                let dist = Math.hypot(mouse.x - px, mouse.y - y);
+                let pulse = Math.sin(t + px*0.01 + y*0.01) * 5;
+                
+                if(dist < 100) {
+                    ctx.lineWidth = 2;
+                    ctx.shadowBlur = 10;
+                    ctx.shadowColor = color;
+                } else {
+                    ctx.lineWidth = 0.5;
+                    ctx.shadowBlur = 0;
+                }
+                
+                drawHex(px, y, size/2 + pulse);
             }
         }
+        ctx.shadowBlur = 0;
         animationId = requestAnimationFrame(loop);
     }
     loop();
 }
 
-// 13. Binary Void
+// 13. Data Stream (Mouse scrambles data)
 function runBinary(ctx, w, h, color) {
-    ctx.font = "12px monospace";
-    const nums = [];
-    for(let i=0; i<100; i++) nums.push({x: Math.random()*w, y: Math.random()*h, v: Math.random()*2+1});
+    ctx.font = "14px monospace";
+    const nums = Array.from({length: 150}, () => ({
+        x: Math.random()*w, y: Math.random()*h, v: Math.random()*3+1
+    }));
     function loop() {
-        ctx.clearRect(0,0,w,h);
+        ctx.fillStyle = 'rgba(10, 25, 47, 0.2)';
+        ctx.fillRect(0,0,w,h);
         ctx.fillStyle = color;
         nums.forEach(n => {
             n.y += n.v;
             if(n.y > h) n.y = 0;
-            ctx.fillText(Math.random() > 0.5 ? "1" : "0", n.x, n.y);
+            
+            // Mouse scramble
+            if(Math.abs(mouse.x - n.x) < 50 && Math.abs(mouse.y - n.y) < 50) {
+                ctx.fillStyle = '#fff';
+                ctx.fillText(Math.random() > 0.5 ? "?" : "!", n.x, n.y);
+                ctx.fillStyle = color;
+            } else {
+                ctx.fillText(Math.random() > 0.5 ? "1" : "0", n.x, n.y);
+            }
         });
         animationId = requestAnimationFrame(loop);
     }
     loop();
 }
 
-// 14. Golden Spiral
+// 14. Hypnotic Spiral (Mouse Zoom)
 function runSpiral(ctx, w, h, color) {
     let t = 0;
     function loop() {
@@ -494,11 +603,19 @@ function runSpiral(ctx, w, h, color) {
         ctx.fillStyle = color;
         const cx = w/2, cy = h/2;
         t += 0.1;
-        for(let i=0; i<200; i++) {
+        
+        // Mouse zoom
+        let zoom = 1 + (mouse.y / h);
+        
+        for(let i=0; i<300; i++) {
             let angle = 0.1 * i + t * 0.02;
-            let r = 2 * i;
+            let r = 2 * i * zoom;
             let x = cx + r * Math.cos(angle);
             let y = cy + r * Math.sin(angle);
+            
+            // Color shift
+            ctx.fillStyle = i % 20 === 0 ? '#fff' : color;
+            
             ctx.beginPath(); ctx.arc(x, y, 2, 0, Math.PI*2); ctx.fill();
         }
         animationId = requestAnimationFrame(loop);
@@ -506,33 +623,42 @@ function runSpiral(ctx, w, h, color) {
     loop();
 }
 
-// 15. Chaos Pendulum (Double Pendulum Simulation)
+// 15. Chaos Physics (Interactive Pendulum)
 function runPendulum(ctx, w, h, color) {
-    let r1 = 100, r2 = 100, m1 = 10, m2 = 10;
+    let r1 = 150, r2 = 150, m1 = 20, m2 = 20;
     let a1 = Math.PI/2, a2 = Math.PI/2;
     let a1_v = 0, a2_v = 0;
     let path = [];
     const cx = w/2, cy = h/3;
     
     function loop() {
-        // Physics (simplified)
-        let num1 = -9.81 * (2 * m1 + m2) * Math.sin(a1);
-        let num2 = -m2 * 9.81 * Math.sin(a1 - 2 * a2);
-        let num3 = -2 * Math.sin(a1 - a2) * m2;
-        let num4 = a2_v * a2_v * r2 + a1_v * a1_v * r1 * Math.cos(a1 - a2);
-        let den = r1 * (2 * m1 + m2 - m2 * Math.cos(2 * a1 - 2 * a2));
-        let a1_a = (num1 + num2 + num3 * num4) / den;
+        // Mouse drag (Basic)
+        if(mouse.down) {
+            // Reset velocity and drag slightly towards mouse X
+            a1_v = 0; a2_v = 0;
+            a1 = (mouse.x - cx) * 0.01;
+            a2 = (mouse.y - cy) * 0.01;
+            path = []; // clear trail
+        } else {
+            // Physics
+            let num1 = -9.81 * (2 * m1 + m2) * Math.sin(a1);
+            let num2 = -m2 * 9.81 * Math.sin(a1 - 2 * a2);
+            let num3 = -2 * Math.sin(a1 - a2) * m2;
+            let num4 = a2_v * a2_v * r2 + a1_v * a1_v * r1 * Math.cos(a1 - a2);
+            let den = r1 * (2 * m1 + m2 - m2 * Math.cos(2 * a1 - 2 * a2));
+            let a1_a = (num1 + num2 + num3 * num4) / den;
 
-        let num1_2 = 2 * Math.sin(a1 - a2);
-        let num2_2 = (a1_v * a1_v * r1 * (m1 + m2));
-        let num3_2 = 9.81 * (m1 + m2) * Math.cos(a1);
-        let num4_2 = a2_v * a2_v * r2 * m2 * Math.cos(a1 - a2);
-        let den_2 = r2 * (2 * m1 + m2 - m2 * Math.cos(2 * a1 - 2 * a2));
-        let a2_a = (num1_2 * (num2_2 + num3_2 + num4_2)) / den_2;
+            let num1_2 = 2 * Math.sin(a1 - a2);
+            let num2_2 = (a1_v * a1_v * r1 * (m1 + m2));
+            let num3_2 = 9.81 * (m1 + m2) * Math.cos(a1);
+            let num4_2 = a2_v * a2_v * r2 * m2 * Math.cos(a1 - a2);
+            let den_2 = r2 * (2 * m1 + m2 - m2 * Math.cos(2 * a1 - 2 * a2));
+            let a2_a = (num1_2 * (num2_2 + num3_2 + num4_2)) / den_2;
 
-        a1_v += a1_a; a2_v += a2_a;
-        a1 += a1_v; a2 += a2_v;
-        a1_v *= 0.999; a2_v *= 0.999; // damping
+            a1_v += a1_a; a2_v += a2_a;
+            a1 += a1_v; a2 += a2_v;
+            a1_v *= 0.999; a2_v *= 0.999; 
+        }
 
         let x1 = r1 * Math.sin(a1) + cx;
         let y1 = r1 * Math.cos(a1) + cy;
@@ -540,16 +666,17 @@ function runPendulum(ctx, w, h, color) {
         let y2 = y1 + r2 * Math.cos(a2);
 
         path.push({x: x2, y: y2});
-        if(path.length > 500) path.shift();
+        if(path.length > 300) path.shift();
 
         ctx.clearRect(0,0,w,h);
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
         
-        // Draw Arms
         ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
         
-        // Draw Trail
+        ctx.beginPath(); ctx.arc(x1, y1, 5, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(x2, y2, 5, 0, Math.PI*2); ctx.fill();
+
         ctx.lineWidth = 0.5;
         ctx.beginPath();
         if(path.length > 0) {
@@ -563,7 +690,7 @@ function runPendulum(ctx, w, h, color) {
     loop();
 }
 
-// --- UTILS ---
+// --- UI LOGIC ---
 function initNavigation() {
     const nav = document.querySelector('.navbar');
     const toggle = document.querySelector('.mobile-toggle');
@@ -576,7 +703,7 @@ function initNavigation() {
         else nav.classList.remove('hidden');
         lastScroll = current;
     });
-    toggle.addEventListener('click', () => menu.classList.toggle('active'));
+    if(toggle) toggle.addEventListener('click', () => menu.classList.toggle('active'));
 }
 
 function initQuotes() {

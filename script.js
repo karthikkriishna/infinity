@@ -68,42 +68,56 @@ if(quoteButton) {
     quoteButton.addEventListener('click', generateQuote);
 }
 
-// Navbar Scroll Effect
+// Navbar Scroll Effect with Glassmorphism
 window.addEventListener('scroll', function() {
     const nav = document.querySelector('nav');
     if (window.scrollY > 50) {
-        nav.style.backgroundColor = 'rgba(10, 25, 47, 0.98)';
+        nav.style.backgroundColor = 'rgba(10, 25, 47, 0.9)';
         nav.style.boxShadow = '0 10px 30px -10px rgba(2,12,27,0.7)';
+        nav.style.padding = '15px 40px';
     } else {
-        nav.style.backgroundColor = 'rgba(10, 25, 47, 0.95)';
-        nav.style.boxShadow = '0 5px 20px rgba(0,0,0,0.2)';
+        nav.style.backgroundColor = 'rgba(10, 25, 47, 0.7)';
+        nav.style.boxShadow = 'none';
+        nav.style.padding = '20px 40px';
     }
 });
 
-// Scroll Reveal Animation
-function reveal() {
-    var reveals = document.querySelectorAll(".timeline-item");
-    for (var i = 0; i < reveals.length; i++) {
-        var windowHeight = window.innerHeight;
-        var elementTop = reveals[i].getBoundingClientRect().top;
-        var elementVisible = 150;
-        if (elementTop < windowHeight - elementVisible) {
-            reveals[i].classList.add("active");
+// Scroll Reveal Animation (Intersection Observer - more efficient)
+const observerOptions = {
+    threshold: 0.2,
+    rootMargin: "0px 0px -50px 0px"
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add("active");
         }
-    }
-}
-window.addEventListener("scroll", reveal);
-reveal(); // Trigger once on load
+    });
+}, observerOptions);
+
+document.querySelectorAll(".timeline-item").forEach(item => {
+    observer.observe(item);
+});
+
 
 // Mobile Navigation
 const hamburger = document.querySelector('.hamburger');
 const navLinks = document.querySelector('.nav-links');
 const links = document.querySelectorAll('.nav-links a');
+const icon = hamburger.querySelector('i');
 
 if (hamburger) {
     hamburger.addEventListener('click', () => {
         navLinks.classList.toggle('active');
-        // Animate hamburger to X (optional, keeping simple for now)
+        // Toggle icon between bars and times (X)
+        if(navLinks.classList.contains('active')){
+            icon.classList.remove('fa-bars');
+            icon.classList.add('fa-times');
+        } else {
+            icon.classList.remove('fa-times');
+            icon.classList.add('fa-bars');
+        }
     });
 }
 
@@ -111,6 +125,8 @@ if (hamburger) {
 links.forEach(link => {
     link.addEventListener('click', () => {
         navLinks.classList.remove('active');
+        icon.classList.remove('fa-times');
+        icon.classList.add('fa-bars');
     });
 });
 
@@ -137,13 +153,10 @@ filterBtns.forEach(btn => {
                 item.classList.remove('active');
             }
         });
-        
-        // Re-trigger reveal to ensure visible items are animated
-        reveal();
     });
 });
 
-// Hero Canvas Animation (Constellation Effect)
+// Hero Canvas Animation (Constellation Effect with Mouse Interaction)
 const canvas = document.getElementById('hero-canvas');
 if (canvas) {
     const ctx = canvas.getContext('2d');
@@ -152,10 +165,23 @@ if (canvas) {
 
     let particlesArray;
 
+    // Mouse position
+    let mouse = {
+        x: null,
+        y: null,
+        radius: (canvas.height/80) * (canvas.width/80)
+    }
+
+    window.addEventListener('mousemove', (event) => {
+        mouse.x = event.x;
+        mouse.y = event.y;
+    });
+
     // Handle resize
     window.addEventListener('resize', () => {
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
+        mouse.radius = (canvas.height/80) * (canvas.width/80);
         init();
     });
 
@@ -175,12 +201,34 @@ if (canvas) {
             ctx.fill();
         }
         update() {
+            // Check if particle is still within canvas
             if (this.x > canvas.width || this.x < 0) {
                 this.directionX = -this.directionX;
             }
             if (this.y > canvas.height || this.y < 0) {
                 this.directionY = -this.directionY;
             }
+
+            // Check collision detection - mouse position / particle position
+            let dx = mouse.x - this.x;
+            let dy = mouse.y - this.y;
+            let distance = Math.sqrt(dx*dx + dy*dy);
+            
+            if (distance < mouse.radius + this.size){
+                if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
+                    this.x += 3;
+                }
+                if (mouse.x > this.x && this.x > this.size * 10) {
+                    this.x -= 3;
+                }
+                if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
+                    this.y += 3;
+                }
+                if (mouse.y > this.y && this.y > this.size * 10) {
+                    this.y -= 3;
+                }
+            }
+
             this.x += this.directionX;
             this.y += this.directionY;
             this.draw();
@@ -226,4 +274,10 @@ if (canvas) {
 
     init();
     animate();
+    
+    // Mouse out event
+    window.addEventListener('mouseout', () => {
+        mouse.x = undefined;
+        mouse.y = undefined;
+    });
 }

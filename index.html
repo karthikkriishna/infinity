@@ -28,9 +28,18 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
+    <!-- Grain Overlay -->
+    <div class="grain-overlay"></div>
+    
+    <!-- Custom Cursor -->
+    <div class="cursor-dot"></div>
+    <div class="cursor-outline"></div>
+
     <!-- Preloader -->
     <div id="preloader">
-        <div class="infinity-loader"></div>
+        <svg width="80" height="40" viewBox="0 0 200 100">
+            <path class="infinity-path" d="M50,50 C20,50 20,90 50,90 C80,90 80,50 110,50 C140,50 140,90 170,90 C200,90 200,50 170,50 C140,50 140,10 110,10 C80,10 80,50 50,50 Z" />
+        </svg>
     </div>
 
     <!-- Navigation -->
@@ -64,7 +73,7 @@
             </div>
             <p class="tagline">The Mathematics Club of IISER Mohali</p>
             <p class="sub-tagline">"Where the finite meets the infinite"</p>
-            <a href="#events" class="cta-button">Explore Events</a>
+            <a href="#events" class="cta-button magnetic-btn">Explore Events</a>
         </div>
     </header>
 
@@ -99,6 +108,9 @@
             </div>
 
             <div class="timeline">
+                <svg class="timeline-svg" preserveAspectRatio="none">
+                    <line x1="50" y1="0" x2="50" y2="100%" class="timeline-path" />
+                </svg>
 
                 <!-- Event Item -->
                 <div class="timeline-item" data-category="social">
@@ -340,7 +352,7 @@
                     <p id="quote-text">Mathematics is the art of giving the same name to different things.</p>
                     <p id="quote-author">— Henri Poincaré</p>
                 </div>
-                <button id="new-quote-btn" class="glow-on-hover">Generate New Quote</button>
+                <button id="new-quote-btn" class="magnetic-btn">Generate New Quote</button>
             </div>
         </div>
     </section>

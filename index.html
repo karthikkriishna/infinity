@@ -9,10 +9,9 @@
     
     <!-- Open Graph -->
     <meta property="og:title" content="Infinity Club">
-    <meta property="og:description" content="Where the finite meets the infinite.">
     <meta property="og:image" content="assets/logo.jpg">
 
-    <!-- Fonts & Icons -->
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
@@ -21,6 +20,13 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
+    <!-- Background Canvas -->
+    <canvas id="bg-canvas"></canvas>
+    
+    <!-- Theme Name Indicator -->
+    <div id="theme-indicator">Theme: <span id="theme-name">Loading...</span></div>
+    <button id="theme-switcher" title="Next Variation"><i class="fas fa-random"></i></button>
 
     <!-- Navigation -->
     <nav class="navbar">
@@ -47,7 +53,6 @@
 
     <!-- Hero -->
     <header id="home" class="hero-section">
-        <canvas id="hero-canvas"></canvas>
         <div class="hero-content reveal">
             <h2 class="hero-subtitle">Welcome to the intersection of</h2>
             <h1 class="hero-title">Logic & <span class="highlight">Imagination.</span></h1>
@@ -71,7 +76,6 @@
     <main>
         <!-- About -->
         <section id="about" class="section">
-            <i class="fas fa-shapes bg-shape shape-1"></i>
             <div class="container">
                 <div class="section-header reveal">
                     <h2 class="section-heading"><span class="heading-num">01.</span> Who We Are</h2>
@@ -166,7 +170,6 @@
 
         <!-- Team -->
         <section id="team" class="section">
-            <i class="fas fa-draw-polygon bg-shape shape-2"></i>
             <div class="container">
                 <div class="section-header reveal">
                     <h2 class="section-heading"><span class="heading-num">03.</span> The Council</h2>

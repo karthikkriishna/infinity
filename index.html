@@ -98,16 +98,57 @@
     <div class="section-inner">
       <h2 class="reveal">Timeline</h2>
 
+      <div class="timeline-filters reveal" role="group" aria-label="Filter events by type">
+        <button type="button" class="filter-chip is-active" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" class="filter-chip" data-filter="tattva" aria-pressed="false">Tattva '26</button>
+        <button type="button" class="filter-chip" data-filter="series" aria-pressed="false">Series</button>
+        <button type="button" class="filter-chip" data-filter="talk" aria-pressed="false">Talk</button>
+        <button type="button" class="filter-chip" data-filter="fest" aria-pressed="false">Fest</button>
+        <button type="button" class="filter-chip" data-filter="social" aria-pressed="false">Social</button>
+      </div>
+
       <div class="timeline">
+        <div class="timeline-group reveal">
+          <h3 class="timeline-year">2026</h3>
+          <ul class="timeline-list">
+            <li class="timeline-item" data-tag="tattva">
+              <p class="t-meta"><span class="t-date">Mar 1</span><span class="t-tag t-tattva">Tattva '26</span></p>
+              <h4>Statistics Workshop</h4>
+              <p>A statistics workshop held in LH2, organized jointly with the BDF Club as part of Tattva '26.</p>
+            </li>
+            <li class="timeline-item" data-tag="tattva">
+              <p class="t-meta"><span class="t-date">Mar 1</span><span class="t-tag t-tattva">Tattva '26</span></p>
+              <h4>Algo-Trading</h4>
+              <p>A workshop on algorithmic trading held in LH4 as part of Tattva '26, with on-the-spot registration available.</p>
+            </li>
+            <li class="timeline-item" data-tag="series">
+              <p class="t-meta"><span class="t-date">From Jan 21</span><span class="t-tag t-series">Series</span></p>
+              <h4>Number Theory Seminar Series</h4>
+              <p>A tentative series of 14 talks on number theory, delivered by ex-Convenor Manu A Sankaran in the AB2 Seminar Room.</p>
+              <details class="abstract">
+                <summary>Read abstract</summary>
+                <p>Historically, number theory has its origins in real-world problems — the measurement of right angles using integral lengths predates even Pythagoras. A natural generalization of these questions is the study of Diophantine equations: polynomial equations in several indeterminates for which solutions are sought in the integers, or more loosely, the rationals.</p>
+                <p>This historical development usually leads to algebraic number theory, where studying certain field extensions helps resolve such problems — for instance, the equation x³ + 1 = y² has finitely many solutions, a fact established via factorisation in a cyclotomic extension of the integers. The same foundations can address Diophantine equations in a different context: understanding their solutions modulo certain integers. The Chinese Remainder Theorem reduces this to prime power moduli, which in turn leads to an alternate number system with several non-standard but interesting properties.</p>
+                <p>This series addresses these systems, their properties, and their applications to problems in algebraic number theory.</p>
+              </details>
+            </li>
+            <li class="timeline-item" data-tag="talk">
+              <p class="t-meta"><span class="t-date">Jan 14</span><span class="t-tag t-talk">Talk</span></p>
+              <h4>Convener Talk: "Just My Nim-ble Mind"</h4>
+              <p>A talk by Convenor Nitish B on personal experience and the path to studying mathematics.</p>
+            </li>
+          </ul>
+        </div>
+
         <div class="timeline-group reveal">
           <h3 class="timeline-year">2025</h3>
           <ul class="timeline-list">
-            <li class="timeline-item">
+            <li class="timeline-item" data-tag="fest">
               <p class="t-meta"><span class="t-date">Mar 16–22</span><span class="t-tag t-fest">Fest</span></p>
               <h4>Cantor's Continuum: Infinity Week</h4>
               <p>The club's annual flagship event, comprising an escape room, an inter-college quiz, and a campus-wide treasure hunt.</p>
             </li>
-            <li class="timeline-item">
+            <li class="timeline-item" data-tag="series">
               <p class="t-meta"><span class="t-date">Jan 12–18</span><span class="t-tag t-series">Series</span></p>
               <h4>Rank Up! Student Talks</h4>
               <p>A series of student-led talks covering a range of topics in mathematics.</p>
@@ -118,12 +159,12 @@
         <div class="timeline-group reveal">
           <h3 class="timeline-year">2024</h3>
           <ul class="timeline-list">
-            <li class="timeline-item">
+            <li class="timeline-item" data-tag="talk">
               <p class="t-meta"><span class="t-date">Dec 22</span><span class="t-tag t-talk">Talk</span></p>
               <h4>Dr. Siddhartha Gadgil</h4>
               <p>A lecture on automated theorem proving.</p>
             </li>
-            <li class="timeline-item">
+            <li class="timeline-item" data-tag="social">
               <p class="t-meta"><span class="t-date">Oct 14</span><span class="t-tag t-social">Social</span></p>
               <h4>Starting at 0: Orientation</h4>
               <p>An orientation event for incoming first-year students, themed around the anime series Jujutsu Kaisen.</p>
@@ -146,7 +187,7 @@
         </article>
         <article class="team-card">
           <span class="avatar">S</span>
-          <h3>Srijan Das</h3>
+          <h3>Sarvan Penumarthi</h3>
           <p class="role">Co-Convenor</p>
         </article>
         <article class="team-card">
@@ -185,9 +226,17 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4l16 16M20 4 4 20"/></svg>
       </a>
     </div>
+    <p class="footer-email">
+      infinityclub@iisermohali.ac.in
+      <button type="button" class="copy-btn" data-copy="infinityclub@iisermohali.ac.in">Copy</button>
+    </p>
     <p class="footer-note">Infinity Club, IISER Mohali.</p>
   </div>
 </footer>
+
+<button id="back-to-top" class="back-to-top" type="button" aria-label="Back to top">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+</button>
 
 <script src="script.js"></script>
 </body>

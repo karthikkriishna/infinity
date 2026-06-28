@@ -102,6 +102,12 @@ svg { display: block; }
   margin-bottom: 40px;
 }
 
+.section-lead {
+  color: var(--ink-soft);
+  max-width: 60ch;
+  margin: -16px 0 24px;
+}
+
 /* ============================================
    Header / nav
    ============================================ */
@@ -460,6 +466,15 @@ svg { display: block; }
   margin-top: 10px;
 }
 
+.abstract .timeline-list {
+  margin-top: 14px;
+  gap: 18px;
+}
+
+.abstract .timeline-item h4 {
+  font-size: 0.98rem;
+}
+
 /* ============================================
    Timeline
    ============================================ */
@@ -520,6 +535,99 @@ svg { display: block; }
 .t-tag.t-social { background: #8A6A3A; }
 .t-tag.t-tattva { background: #2F6F5E; }
 .t-tag.t-workshop { background: #4F6B5A; }
+.t-tag.t-competition { background: #6B4F8A; }
+.t-tag.t-outreach { background: #3D6B8A; }
+
+/* ============================================
+   Page header (non-home pages)
+   ============================================ */
+.page-header {
+  padding: 64px 0 48px;
+  border-bottom: 1px solid var(--line);
+}
+
+.page-header h1 {
+  font-size: clamp(2rem, 4vw, 3rem);
+  margin-bottom: 14px;
+}
+
+.page-header p {
+  color: var(--ink-soft);
+  font-size: 1.05rem;
+  max-width: 60ch;
+}
+
+/* ============================================
+   Tradition grid (culture page)
+   ============================================ */
+.tradition-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.tradition-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 26px 24px;
+}
+
+.tradition-since {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-bottom: 10px;
+}
+
+.tradition-card h3 {
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+}
+
+.tradition-card p {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
+}
+
+/* ============================================
+   Mini cards (home page highlights)
+   ============================================ */
+.mini-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.mini-card {
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mini-card h3 {
+  font-size: 1rem;
+}
+
+.mini-card p {
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+}
+
+.mini-card .t-tag {
+  align-self: flex-start;
+}
+
+.cta-row {
+  margin-top: 28px;
+}
 
 /* ============================================
    Team
@@ -564,6 +672,11 @@ svg { display: block; }
   letter-spacing: 0.04em;
   color: var(--ink-faint);
   margin-bottom: 14px;
+}
+
+.team-card p:not(.role) {
+  color: var(--ink-soft);
+  font-size: 0.92rem;
 }
 
 /* ============================================
@@ -742,6 +855,12 @@ svg { display: block; }
   }
   .about-visual { order: -1; }
   .team-grid {
+    grid-template-columns: 1fr;
+  }
+  .tradition-grid {
+    grid-template-columns: 1fr;
+  }
+  .mini-grid {
     grid-template-columns: 1fr;
   }
 }

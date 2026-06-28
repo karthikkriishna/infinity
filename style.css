@@ -262,12 +262,6 @@ svg { display: block; }
   margin-bottom: 22px;
 }
 
-.hero-title em {
-  font-style: italic;
-  font-weight: 500;
-  color: var(--accent-deep);
-}
-
 .hero-desc {
   font-size: 1.1rem;
   color: var(--ink-soft);
@@ -487,11 +481,6 @@ svg { display: block; }
   margin-bottom: 14px;
 }
 
-.bio {
-  color: var(--ink-soft);
-  font-size: 0.95rem;
-}
-
 /* ============================================
    Quote
    ============================================ */
@@ -520,30 +509,12 @@ svg { display: block; }
   font-size: clamp(1.3rem, 2.6vw, 1.7rem);
   font-weight: 500;
   margin: 0 0 16px;
-  transition: opacity 0.25s var(--ease);
 }
 
 .quote-by {
   font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--ink-faint);
-  margin-bottom: 28px;
-  transition: opacity 0.25s var(--ease);
-}
-
-.quote-next {
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--accent-deep);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s var(--ease);
-}
-.quote-next:hover {
-  border-color: var(--accent-deep);
-}
-
-.quote-fade {
-  opacity: 0;
 }
 
 /* ============================================

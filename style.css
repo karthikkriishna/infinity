@@ -392,6 +392,60 @@ svg { display: block; }
 }
 
 /* ============================================
+   Empty state
+   ============================================ */
+.empty-state {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+/* ============================================
+   Propose form
+   ============================================ */
+.propose-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 540px;
+}
+
+.form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-row label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+.form-row input,
+.form-row textarea {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--ink);
+  background: var(--paper-raised);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  resize: vertical;
+}
+
+.form-row input:focus,
+.form-row textarea:focus {
+  outline: none;
+  border-color: var(--accent-deep);
+}
+
+.propose-form .btn {
+  align-self: flex-start;
+}
+
+/* ============================================
    Timeline filters
    ============================================ */
 .timeline-filters {

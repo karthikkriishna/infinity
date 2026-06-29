@@ -51,10 +51,23 @@
 
   <section class="section">
     <div class="section-inner">
+      <h2 class="reveal">Upcoming</h2>
+      <!-- No upcoming events right now. When there's one, replace the paragraph
+           below with a timeline-list / timeline-item block, same format as the
+           archive section below. -->
+      <p class="empty-state reveal">No upcoming events right now.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-inner">
+
+      <h2 class="reveal">Archive</h2>
 
       <div class="timeline-filters reveal" role="group" aria-label="Filter events by type">
         <button type="button" class="filter-chip is-active" data-filter="all" aria-pressed="true">All</button>
-        <button type="button" class="filter-chip" data-filter="tattva" aria-pressed="false">Tattva '26</button>
+        <button type="button" class="filter-chip" data-filter="tattva26" aria-pressed="false">Tattva '26</button>
+        <button type="button" class="filter-chip" data-filter="tattva25" aria-pressed="false">Tattva '25</button>
         <button type="button" class="filter-chip" data-filter="fest" aria-pressed="false">Club Week</button>
         <button type="button" class="filter-chip" data-filter="talk" aria-pressed="false">Talk</button>
         <button type="button" class="filter-chip" data-filter="workshop" aria-pressed="false">Workshop</button>
@@ -71,25 +84,19 @@
           <h3 class="timeline-year">2026</h3>
           <ul class="timeline-list">
 
-            <li class="timeline-item" data-tag="tattva">
+            <li class="timeline-item" data-tag="tattva26">
               <p class="t-meta"><span class="t-date">Mar 1</span><span class="t-tag t-tattva">Tattva '26</span></p>
               <h4>Statistics Workshop</h4>
               <p>Workshop on data analysis and statistics, with the BDF Club. Guest instructors: Prof. N.G. Prasad and Dr. Neeraja Sahasrabudhe. LH2 (NKN).</p>
             </li>
 
-            <li class="timeline-item" data-tag="tattva">
+            <li class="timeline-item" data-tag="tattva26">
               <p class="t-meta"><span class="t-date">Mar 1</span><span class="t-tag t-tattva">Tattva '26</span></p>
               <h4>Algorithmic Trading Competition</h4>
               <p>Simulated-market trading competition. LH4.</p>
             </li>
 
-            <li class="timeline-item" data-tag="tattva">
-              <p class="t-meta"><span class="t-date">Mar 1</span><span class="t-tag t-tattva">Tattva '26</span></p>
-              <h4>Capture The Flag</h4>
-              <p>Cryptography and steganography challenge.</p>
-            </li>
-
-            <li class="timeline-item" data-tag="tattva">
+            <li class="timeline-item" data-tag="tattva26">
               <p class="t-meta"><span class="t-date">Feb 28</span><span class="t-tag t-tattva">Tattva '26</span></p>
               <h4>Computational Epigraphy Workshop</h4>
               <p>Workshop on computational techniques for deciphering ancient inscriptions. Guest: Prof. Sitabhra Sinha (IMSc Chennai).</p>
@@ -163,16 +170,16 @@
               </details>
             </li>
 
-            <li class="timeline-item" data-tag="workshop">
-              <p class="t-meta"><span class="t-date">Mar 1</span><span class="t-tag t-workshop">Workshop</span></p>
+            <li class="timeline-item" data-tag="tattva25">
+              <p class="t-meta"><span class="t-date">Mar 1</span><span class="t-tag t-tattva">Tattva '25</span></p>
               <h4>Fourier Analysis & Signal Processing</h4>
-              <p>Science Fest 2025 workshop, with Turing, Robotics, and the Astronomy Club.</p>
+              <p>Workshop, with Turing, Robotics, and the Astronomy Club.</p>
             </li>
 
-            <li class="timeline-item" data-tag="competition">
-              <p class="t-meta"><span class="t-date">Feb 28</span><span class="t-tag t-competition">Competition</span></p>
+            <li class="timeline-item" data-tag="tattva25">
+              <p class="t-meta"><span class="t-date">Feb 28</span><span class="t-tag t-tattva">Tattva '25</span></p>
               <h4>Integration Bee</h4>
-              <p>3rd edition, Science Fest 2025, AB1-1A.</p>
+              <p>3rd edition. AB1-1A.</p>
             </li>
 
             <li class="timeline-item" data-tag="series">
@@ -303,6 +310,33 @@
         </div>
 
       </div>
+    </div>
+  </section>
+
+  <section class="section" id="propose">
+    <div class="section-inner">
+      <h2 class="reveal">Propose an Event</h2>
+      <p class="section-lead reveal">Have an idea for a talk, workshop, or competition? Tell us about it.</p>
+
+      <form class="propose-form reveal" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+        <div class="form-row">
+          <label for="propose-name">Name</label>
+          <input type="text" id="propose-name" name="name" required>
+        </div>
+        <div class="form-row">
+          <label for="propose-email">Email</label>
+          <input type="email" id="propose-email" name="email" required>
+        </div>
+        <div class="form-row">
+          <label for="propose-title">Event idea</label>
+          <input type="text" id="propose-title" name="event_title" required>
+        </div>
+        <div class="form-row">
+          <label for="propose-details">Details</label>
+          <textarea id="propose-details" name="details" rows="5" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit proposal</button>
+      </form>
     </div>
   </section>
 

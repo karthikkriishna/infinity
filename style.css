@@ -441,6 +441,14 @@ svg { display: block; }
   font-size: 0.8rem;
   color: var(--accent-deep);
   list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+}
+
+.abstract summary::marker {
+  display: none;
 }
 
 .abstract summary::-webkit-details-marker {
@@ -448,11 +456,13 @@ svg { display: block; }
 }
 
 .abstract summary::before {
-  content: '▸ ';
+  content: '▸';
+  display: inline-block;
+  transition: transform 0.2s var(--ease);
 }
 
 .abstract[open] summary::before {
-  content: '▾ ';
+  transform: rotate(90deg);
 }
 
 .abstract p {
